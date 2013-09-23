@@ -2,7 +2,9 @@
 from __future__ import division
 import sys
 import codecs
+import matplotlib
 from collections import defaultdict
+from math import log
 
 """ Copied from 'Computation Tips and Tricks' """
 """ Modified to ignore punctuation """
@@ -21,6 +23,13 @@ def count_words(filename):
             
     return countsdict
 
+def count_frequency(counts, total_tokens):
+	freqdict = {}
+	for (word, count) in countsdict.items():
+		freqdict[word] = count / total_tokens
+
+	return freqdict
+
 if __name__=='__main__':
 	input_file = sys.argv[1]
 	countsdict = count_words(input_file)
@@ -33,4 +42,12 @@ if __name__=='__main__':
 	print "Tokens: " + str(tokens)
 	print "Types: " + str(word_types)
 	print "Token-to-Type ration: " + str(tokens / word_types)
+
+	freqdict = count_frequency(countsdict, tokens)
+	entropy = 0
+	for freq in freqdict.values():
+		entropy += -1 * freq * log(freq, 2)
+	print "Entropy: " + str(entropy) + " bits"
+
+	# TODO: plots
 
