@@ -99,6 +99,7 @@ if __name__=='__main__':
 
 	# divide each token count by total tokens to get frequencies
 	rel_frequencies = map(lambda x: x / tokens, countsdict.values())
+	
 	entropy = sum(map(lambda x: -1 * x * log(x, 2), rel_frequencies))
 	print "Entropy: " + str(entropy) + " bits"
 
@@ -106,4 +107,3 @@ if __name__=='__main__':
 	plot_token_length_freq(countsdict)
 	plot_type_length_freq(countsdict.keys())
 	plot_rank_vs_freq(countsdict.values())
-

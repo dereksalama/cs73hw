@@ -1,0 +1,9 @@
+Derek Salama
+CS 73
+Problem Set 1: Text Processing
+
+To run my program, please use the command "python ps1.py [path_to_text_file]".
+The number of tokens, types, token-to-type ratio and entropy will print to the command line.
+The plots will show one at a time, so please close an open plot to advance.
+
+ps1.py contains main() and all other functions. Don't worry, it isn't too long!
