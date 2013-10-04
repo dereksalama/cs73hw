@@ -1,0 +1,7 @@
+Derek Salama
+CS73
+10/4/2013
+
+Homework 2 Part 2 writeup
+
+As you can see in output.txt, the unigram model was able to correctly identify the author of each test file. I found that converting all words to lowercase improved all of the models. The bigram model was also correct with a unigram weight of 0.2, but the perplexities were higher than the unigram model. Since the unigram model was better at identifying the authors, a higher unigram weight in the bigram model produced better results. I suspect that the unigram model performed better because the corpus was small, and thus most of the bigrams had not been seen. The authorship for all the unknown files, with or without considering the prior probability, was found to be Madison.

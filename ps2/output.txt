@@ -1,0 +1,80 @@
+========UNIGRAM (log(Perplexity))========
+ File        Hamilton         Madison      Guess     Actual
+------------------------------------------------------------
+ 12.txt   9.14411455722   9.23213815688   Hamilton HAMILTON 
+
+ 11.txt   9.13384470744   9.24348051976   Hamilton HAMILTON 
+
+ 58.txt   8.83769518691   8.73764675401    Madison  MADISON 
+
+ 48.txt   9.04714449966   8.86516416977    Madison  MADISON 
+
+  9.txt    9.0203127204   9.05965215173   Hamilton HAMILTON 
+
+ 47.txt   9.03340824158   8.80051830965    Madison  MADISON 
+
+========BIGRAM (log(Perplexity))========
+ File        Hamilton         Madison      Guess     Actual
+------------------------------------------------------------
+ 12.txt   11.4649691763    11.552992776   Hamilton HAMILTON 
+
+ 11.txt   11.4548455147   11.5644813271   Hamilton HAMILTON 
+
+ 58.txt   11.1585139038   11.0584654709    Madison  MADISON 
+
+ 48.txt   11.3678289266   11.1858485967    Madison  MADISON 
+
+  9.txt   11.3410763579   11.3804157892   Hamilton HAMILTON 
+
+ 47.txt    11.354490461   11.1216005291    Madison  MADISON 
+
+========IDENTIFICATION WITHOUT PRIOR (log(Perplexity))========
+ File        Hamilton         Madison      Guess     Actual
+------------------------------------------------------------
+ 53.txt   9.00160989573   8.86393524117    Madison  UNKNOWN 
+
+ 63.txt   9.08166133335   8.90485151278    Madison  UNKNOWN 
+
+ 51.txt   8.78369224942   8.62635881775    Madison  UNKNOWN 
+
+ 62.txt   9.06675439766   8.92218702297    Madison   UNKNOWN
+
+ 49.txt   8.82348398275   8.67986117396    Madison  UNKNOWN 
+
+ 54.txt   8.75452206732   8.63197140449    Madison  UNKNOWN 
+
+ 52.txt   8.99171903112    8.8061044809    Madison   UNKNOWN
+
+ 55.txt    9.0016702763    8.8780531018    Madison  UNKNOWN 
+
+ 56.txt   8.79789757939    8.6558963038    Madison  UNKNOWN 
+
+ 57.txt   8.95411600167   8.82919582257    Madison  UNKNOWN 
+
+ 50.txt   9.20023611493   9.03208096713    Madison  UNKNOWN 
+
+========IDENTIFICATION WITH PRIOR (Unigram, log(P(w|author)P(author))========
+ File        Hamilton         Madison      Guess     Actual
+------------------------------------------------------------
+ 53.txt  -19542.8535376  -19245.7878331    Madison  UNKNOWN 
+
+ 63.txt  -27635.8538913   -27099.647578    Madison  UNKNOWN 
+
+ 51.txt  -16873.8312651  -16573.4197135    Madison  UNKNOWN 
+
+ 62.txt  -21678.9682188  -21335.1335965    Madison   UNKNOWN
+
+ 49.txt  -14594.4009614  -14358.6748063    Madison  UNKNOWN 
+
+ 54.txt  -17553.1751989  -17309.2870906    Madison  UNKNOWN 
+
+ 52.txt  -16644.0303806  -16302.2838187    Madison   UNKNOWN
+
+ 55.txt  -18399.7724987  -18148.9249646    Madison  UNKNOWN 
+
+ 56.txt  -13848.2492439  -13626.5652068    Madison  UNKNOWN 
+
+ 57.txt  -19815.8171657  -19541.1947799    Madison  UNKNOWN 
+
+ 50.txt  -10221.8207777  -10036.8263791    Madison  UNKNOWN 
+
