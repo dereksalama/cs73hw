@@ -15,20 +15,21 @@ def forward(emissions, transitions, sequence):
 
 	for (i, c) in enumerate(sequence[1:], start=1):
 		total = 0
-		for s_i in unique_states:
-			p_emission = emissions[(s_i, c)]
+		for current_state in unique_states:
+			p_emission = emissions[(current_state, c)]
 			total_prob = 0
-			for s_j in unique_states:
-				p_transition = transitions[(s_j, s_i)]
-				prev = matrix[s_j][i-1]
-				prob = prev * p_emission * p_transition
-				total_prob += prob
-			matrix[s_i].append(total_prob)
+			for previous_state in unique_states:
+				p_transition = transitions[(previous_state, current_state)]
+				p_previous_state = matrix[previous_state][i-1]
+				total_prob += p_previous_state * p_emission * p_transition
+			matrix[current_state].append(total_prob)
+
 	for l in matrix.values():
 		for (i, p) in enumerate(l):
 			l[i] = p / forward_const
 
-	total = sum(p for l[:-1] in matrix.values())
+	print matrix
+	total = sum(l[-1] for l in matrix.values())
 	print "Foward: " + str(total)
 
 
