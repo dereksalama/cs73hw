@@ -1,0 +1,14 @@
+# Noun 0.6
+# Verb 0.1
+# Adjective 0.3
+Noun Noun 0.4
+Noun Verb 0.5
+Noun Adjective 0.1
+Verb Noun 0.7
+Verb Adverb 0.2
+Verb Verb 0.1
+Adjective Noun 0.7
+Adjective Adjective 0.3
+Adverb Noun 0.4
+Adverb Verb 0.4
+Adverb Adjective 0.2

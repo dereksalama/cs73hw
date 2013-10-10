@@ -7,7 +7,7 @@ import sys
 from math import log
 
 # scale all probabilities to prevent underflow
-forward_const = 10000000.0
+forward_const = 10.0e100
 def forward(emissions, transitions, sequence):
 	unique_states = set(key[0] for key in emissions.keys())
 
@@ -15,8 +15,8 @@ def forward(emissions, transitions, sequence):
 
 	# Initialize: fill out first column
 	for state in unique_states:
-		p_s = transitions[("#", state)]
-		p_w = emissions[(state, sequence[0])]
+		p_s = transitions.get(("#", state), 0)
+		p_w = emissions.get((state, sequence[0]), 0)
 		matrix[state].append(p_s * p_w * forward_const)
 
 	# General Case
@@ -25,23 +25,19 @@ def forward(emissions, transitions, sequence):
 		total = 0
 		# loop through each state for given observation
 		for current_state in unique_states:
-			p_emission = emissions[(current_state, c)]
+			p_emission = emissions.get((current_state, c), 0)
 			total_prob = 0
 			# Inner loop: all possible previous states
 			for previous_state in unique_states:
-				p_transition = transitions[(previous_state, current_state)]
+				p_transition = transitions.get((previous_state, current_state), 0)
 				p_previous_state = matrix[previous_state][i-1]
 				total_prob += p_previous_state * p_emission * p_transition
 			matrix[current_state].append(total_prob)
 
-	# divide by constant to get correct answer
-	for l in matrix.values():
-		for (i, p) in enumerate(l):
-			l[i] = p / forward_const
-
 	# sum final column
 	total = sum(l[-1] for l in matrix.values())
-	print "Foward: " + str(total)
+	total = log2(total) - log2(forward_const)
+	print "Foward: 2 ^ " + str(total)
 
 def log2(n):
 	return log(n, 2)
@@ -52,23 +48,39 @@ def viterbi(emissions, transitions, sequence):
 	matrix = {state: [] for state in unique_states}
 	# Initialize first column
 	for state in unique_states:
-		p_s = transitions[("#", state)]
-		p_w = emissions[(state, sequence[0])]
-		p = log2(p_s) + log2(p_w)
+		p_s = transitions.get(("#", state), None)
+		p_w = emissions.get((state, sequence[0]), None)
+		if p_w is None or p_s is None:
+			p = None
+		else:
+			p = log2(p_s) + log2(p_w)
 		matrix[state].append(("#", p))
 
 	# General case: iterate through observation
 	for (i, c) in enumerate(sequence[1:], start=1):
 		# loop throigh each state for a given observation
 		for current_state in unique_states:
+			p_emission = emissions.get((current_state, c), None)
+			# if emission is not possible, just skip
+			if p_emission is None:
+				matrix[current_state].append((None, None))
+				continue
+
 			# use logs for probabilities to prevent underflow
-			p_emission = log2(emissions[(current_state, c)])
+			p_emission = log2(p_emission)
 			max_prob = None
 			max_previous_state = None
 			#  loop through all possible previous states
 			for previous_state in unique_states:
-				p_transition = log2(transitions[(previous_state, current_state)])
+				p_transition = transitions.get((previous_state, current_state), None)
+				if p_transition is None:
+					continue
+				p_transition = log2(p_transition)
+
 				p_previous_state = matrix[previous_state][i-1][1]
+				if p_previous_state is None:
+					continue
+
 				p = p_previous_state + p_transition + p_emission
 				# only record the greatest probability
 				if (p > max_prob):
@@ -93,7 +105,9 @@ def viterbi(emissions, transitions, sequence):
 		max_state = matrix[max_state][i][0]
 		categories.append(max_state)
 	categories.reverse()
-	print "viterbi: " + "".join(categories)
+	print "viterbi: ",
+	for c in categories:
+		print c,
 
 # parse transitions file into a dictionary
 # key: (state_state, finish_state), value: probability of transition

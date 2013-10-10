@@ -1,0 +1,13 @@
+Noun buffalo 0.4
+Noun green 0.2
+Noun sleep 0.1
+Noun ideas 0.3
+Adjective buffalo 0.2
+Adjective green 0.3
+Adjective colorless 0.4
+Adjective furiously 0.1
+Verb buffalo 0.3
+Verb sleep 0.4
+Verb green 0.3
+Adverb buffalo 0.1
+Adverb furiously 0.9
