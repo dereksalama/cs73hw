@@ -8,6 +8,7 @@ from __future__ import division
 import codecs
 import sys
 import pdb
+import string
 
 from random import random
 from math import log
@@ -23,6 +24,9 @@ def log2(n):
 forward_const = 1e5
 
 convergence_threshold = 10 ** -4
+
+# number of times to do foward-backward algorithm
+num_iterations = 5
 
 def forward(emissions, transitions, sequence):
 	unique_states = set(key[0] for key in emissions.keys())
@@ -147,10 +151,12 @@ def pretty_print(emissions, transitions):
 	em_file = open('emit-2state.txt', 'w')
 	for e, p in sorted(emissions.items()):
 		em_file.write(e[0] + " " + e[1] + " " + str(p) + "\n")
+	em_file.close()
 
 	trans_file = open('trans-2state.txt', 'w')
 	for t, p in sorted(transitions.items()):
 		trans_file.write(t[0] + " " + t[1] + " " + str(p) + "\n")
+	trans_file.close()
 
 def run(initial_emissions, initial_transitions, words):
 	init_alpha = total_alpha(initial_emissions, initial_transitions, words)
@@ -210,8 +216,6 @@ def test():
 	print emissions_count
 	print transitions_count
 
-
-
 # parse transitions file into a dictionary
 # key: (state_state, finish_state), value: probability of transition
 def parse_transitions(file):
@@ -238,17 +242,114 @@ def parse_emissions(file):
 
 	return normalize(emission_count)
 
+def tokenize(lines):
+	result = []
+	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+
+	for line in lines:
+		#remove punctuation
+		s = line.translate(remove_punctuation_map).lower()
+
+		words = s.split()
+		result.extend(words)
+
+	return result
+
+def create_vocab_file(lang_file):
+	outf = open('latin-udhr-words.txt', 'w')
+	all_words = set()
+	remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+	lines = codecs.open(lang_file, 'r', 'utf8')
+
+	for line in lines:
+		#remove punctuation
+		s = line.translate(remove_punctuation_map).lower()
+		all_words |= set(s.split())
+
+	for w in all_words:
+		for c in w:
+			outf.write(c + " ")
+		outf.write("\n")
+	outf.close()
+
+def viterbi(emissions, transitions, sequence):
+	unique_states = set(key[0] for key in emissions.keys())
+
+	matrix = {state: [] for state in unique_states}
+	# Initialize first column
+	for state in unique_states:
+		p_s = transitions.get(("#", state), None)
+		p_w = emissions.get((state, sequence[0]), None)
+		if p_w is None or p_s is None:
+			p = None
+		else:
+			p = log2(p_s) + log2(p_w)
+		matrix[state].append(("#", p))
+
+	# General case: iterate through observation
+	for (i, c) in enumerate(sequence[1:], start=1):
+		# loop throigh each state for a given observation
+		for current_state in unique_states:
+			p_emission = emissions.get((current_state, c), None)
+			# if emission is not possible, just skip
+			if p_emission is None:
+				matrix[current_state].append((None, None))
+				continue
+
+			# use logs for probabilities to prevent underflow
+			p_emission = log2(p_emission)
+			max_prob = None
+			max_previous_state = None
+			#  loop through all possible previous states
+			for previous_state in unique_states:
+				p_transition = transitions.get((previous_state, current_state), None)
+				if p_transition is None:
+					continue
+				p_transition = log2(p_transition)
+
+				p_previous_state = matrix[previous_state][i-1][1]
+				if p_previous_state is None:
+					continue
+
+				p = p_previous_state + p_transition + p_emission
+				# only record the greatest probability
+				if (p > max_prob):
+					max_previous_state = previous_state
+					max_prob = p
+			# save tuple (source state, probability)
+			matrix[current_state].append((max_previous_state, max_prob))
+
+	categories = []
+
+	# Find state with the greatest probability in last column
+	max_p = None
+	max_state = None
+	for s in unique_states:
+		if matrix[s][-1][1] > max_p:
+			max_p = matrix[s][-1][1]
+			max_state = s
+	categories.append(max_state)
+
+	# "Walk" through table, folliwing the source state in our tuples
+	for i in range(len(matrix[max_state]) - 1, 0, -1):
+		max_state = matrix[max_state][i][0]
+		categories.append(max_state)
+	categories.reverse()
+
+	return categories
+
 if __name__=='__main__':
 	emissions_file = sys.argv[1]
 	transitions_file = sys.argv[2]
-	coprus_file = sys.argv[3]
+	lang_file = sys.argv[3]
+	create_vocab_file(lang_file)
 
-	text = codecs.open(coprus_file, 'r', 'utf8')
+	text = codecs.open('latin-udhr-words.txt', 'r', 'utf8')
 	words = [ w for w in text ]
 
-	# Execute 10 times and choose the best
+	# Execute num_iterations times and choose the best
 	results = []
-	for i in range(1, 11):
+	for i in range(0, num_iterations):
 		emissions_dict = parse_emissions(emissions_file)
 		transitions_dict = parse_transitions(transitions_file)
 		results.append(run(emissions_dict, transitions_dict, words))
@@ -257,4 +358,15 @@ if __name__=='__main__':
 	best = max(results)
 	pretty_print(best[1], best[2])
 
-	#test()
+	outf = open('tagged_latin.txt', 'w')
+	for word in words:
+		w = word.split()
+		tagging = viterbi(best[1], best[2], w)
+		for c in w:
+			outf.write(c + " ")
+		outf.write("\n")
+
+		for t in tagging:
+			outf.write(t + " ")
+		outf.write("\n\n")
+	outf.close()

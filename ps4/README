@@ -1,0 +1,8 @@
+To run my program, please execute:
+    python ps4.py emit-cv.txt trans-cv.txt latin-UDHR.txt
+
+The trained transitions file is emit-2state.txt, and the emissions file is trans-2state.txt. My vocabulary for Latin is in the latin-udhr-words.txt and the tagged output is in tagged_latin.txt.
+
+RESULTS SUMMARY:
+
+I found that my program is usually able to find the correct tagging given enough iterations of the forward-backward algorithm. The included output was calculated by choosing the best of five iterations. However, some iterations seem to find a local maxima that flips the consonant and vowel states. Even with several iterations, the program sometimes fails to find the correct maxima. Curiously enough, my program seemed to be correct more often on the Latin text than with English. I hypothesize that the increased accuracy with Latin is because Latin does not have as many spelling exceptions and "silent" characters as English.
