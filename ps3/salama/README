@@ -1,0 +1,7 @@
+Derek Salama
+CS 73
+10/11/2013
+
+To execute my program, please supply 3 arguments: the emissions file, observation file, and transitionf file, in that order. For example,
+
+python ps3.py emissions.txt observation.txt transitions.txt
