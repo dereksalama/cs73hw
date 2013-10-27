@@ -2,6 +2,7 @@
 *.zip
 # C extensions
 *.so
+*.swp
 
 # Packages
 *.egg

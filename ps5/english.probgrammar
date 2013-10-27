@@ -1,0 +1,34 @@
+S	NP VP	1.0
+
+NP	Det NP	0.15
+NP	NP PP	0.05
+NP	Adj NP	0.10
+
+VP	VP NP	0.40
+VP	VP PP	0.30
+
+PP	Prep NP	1.0
+
+NP	fruit	0.08
+NP	flies	0.12
+NP	banana	0.07
+NP	time	0.09
+NP	arrow	0.04
+NP	elephant	0.07
+NP	i	0.10
+NP	shot	0.06
+NP	pajamas	0.07
+
+VP	flies	0.10
+VP	like	0.08
+VP	shot	0.12
+
+Det	a	0.50
+Det	an	0.20
+Det	my	0.30
+
+Adj 	fruit	0.70
+Adj	time	0.30
+
+Prep	like	0.65
+Prep	in	0.35
