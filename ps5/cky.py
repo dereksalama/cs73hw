@@ -7,6 +7,7 @@ import sys
 import codecs
 import pdb
 from collections import defaultdict
+from collections import deque
 
 def parse_grammar_file(filename):
 	text = codecs.open(filename, 'r', 'utf8')
@@ -35,7 +36,7 @@ def productions_for_cells(left, right, rules):
 								continue
 						for p in production:
 							prob = t1[1] * t2[1] * p[1]
-							result.add((p[0], prob, ))
+							result.add((p[0], prob, t1, t2))
 		return result
 
 def pretty_print_matrix(matrix):
@@ -50,13 +51,30 @@ def pretty_print_matrix(matrix):
 
 				print "\n"
 
+def print_cky_parse_tree(root, level):
+		for i in range(0, level):
+				print "\t",
+		print "(",
+		print root[0],
+		if len(root) == 3: # leef node
+			print root[2],
+		else:
+			print ""
+			print_cky_parse_tree(root[2], level + 1)
+			print ""
+			print_cky_parse_tree(root[3], level + 1)
+		print ")",
+
+				
+
 def cky(sentence, rules):
 		matrix = [[]]
 
 		# special case for first row
 		for w in sentence:
 				productions = rules[(w,)]
-				matrix[0].append(productions)
+				cell = tuple(p + (w,) for p in productions)
+				matrix[0].append(cell)
 
 		for row in range(1, len(sentence)):
 				matrix.append([])
@@ -67,18 +85,19 @@ def cky(sentence, rules):
 						matrix[row].append(cell)
 		return matrix
 
-						
-
-
 if __name__=='__main__':
 	grammar_file = sys.argv[1]
 	rules = parse_grammar_file(grammar_file)
 	sentence_file = sys.argv[2]
 	text = codecs.open(sentence_file, 'r', 'utf8')
-	"""
 	for line in text:
-			cky(line.split(), rules)
-	"""
-	line = text.next()
-	matrix = cky(line.split(), rules)
-	pretty_print_matrix(matrix)
+			matrix = cky(line.split(), rules)
+			pretty_print_matrix(matrix)
+			valid_roots = filter(lambda x: x[0] == u"S", matrix[-1][0])
+			if len(valid_roots) == 0:
+					print "No valid parse for " + line
+			else:
+					valid_roots.sort(key=lambda x: x[1])
+					max_valid_root = valid_roots[-1]
+					print_cky_parse_tree(max_valid_root, 0)
+					print "\n\n"
