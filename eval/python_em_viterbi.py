@@ -380,7 +380,7 @@ if __name__=='__main__':
         for s in sequences:
 	    tagging = viterbi(best[1], best[2], s)
             for (word, tag) in zip(s, tagging):
-                outf.write("( " + word + ", " + tag + " ) ")
+                outf.write("(" + word + "," + tag + ") ")
 	    outf.write("\n")
 
 	outf.close()
